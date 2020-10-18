@@ -5,13 +5,17 @@
     <title>WebRTC</title>
 </head>
 <body>
-<h1>화상통화</h1>
-<h2>내 화면</h2>
-<video id="localVideo" autoplay width="480px" playsinline></video>
-<h2>상대방 화면</h2>
-<video id="remoteVideo" autoplay width="480px" playsinline></video>
-<button id="call">📞</button>
-<script src="/socket.io/socket.io.js"></script>
-<script src="script.js" type="module"></script>
+    <h1>화상통화</h1>
+
+    <h2>내 화면</h2>
+    <input type="text" readonly id="localConnectionId" /> <!--내 ConnectionId-->
+    <video id="localVideo" autoplay width="480px" playsinline></video>
+
+    <h2>상대방 화면</h2>
+    <input type="text" id="remoteConnectionId" /> <!--상대방 ConnectionId-->
+    <video id="remoteVideo" autoplay width="480px" playsinline></video>
+    <button id="call">📞</button>
+
+    <script src="script.js" type="module"></script>
 </body>
 </html>

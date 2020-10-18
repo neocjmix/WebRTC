@@ -1,16 +1,22 @@
-const static = require('node-static');
-const http = require('http');
-const socketIO = require('socket.io');
+const AWS = require('aws-sdk');
 
-// client 파일들을 같은 서버에서 서빙한다.
-const file = new static.Server('../client');
-const app = http
-  .createServer(file.serve.bind(file))
-  .listen(3000);
+exports.handler = async (event) => {
+  const from = event.requestContext.connectionId;
+  const endpoint = `${event.requestContext.domainName}/${event.requestContext.stage}`;
 
-// 모든 클라이언트에서 발송된 메시지를 다른 모든 클라이언트에게 무차별적으로 전송한다.
-socketIO
-  .listen(app).sockets
-  .on('connection', socket => (
-    socket.on('message', message => socket.broadcast.emit('message', message))
-  ));
+  if(event.body){
+    const {connectionId, message} = JSON.parse(event.body);
+    await new AWS
+      .ApiGatewayManagementApi({ endpoint })
+      .postToConnection({
+        ConnectionId: connectionId,
+        Data: JSON.stringify({ message, from }),
+      })
+      .promise();
+  }
+
+  return {
+    statusCode: 200,
+    body: JSON.stringify({ connectionId : from }),
+  };
+};
